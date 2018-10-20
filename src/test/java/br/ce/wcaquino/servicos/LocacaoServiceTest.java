@@ -61,7 +61,8 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void deveAlugarFilme() throws Exception {
-
+		//Adiciona logica para nao excecutar no Sabado
+		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY)); 
 		
 		// Teste com Junit de condicao
 		
@@ -189,7 +190,8 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void naoDeveDevolverFilmeNoDomingo() throws LocadoraException, FilmeSemEstoqueException {
-		
+		// Adiciona logica para excecutar no Sabado
+		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 
 		// cenario
 		Usuario usuario = new Usuario("Usuario 1");
