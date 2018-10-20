@@ -8,7 +8,9 @@ import java.util.Date;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -18,8 +20,11 @@ import br.ce.wcaquino.utils.DataUtils;
 public class LocacaoServiceTest {
 	//DOC. HAMCREST http://hamcrest.org/JavaHamcrest/javadoc/1.3/index.html?help-doc.html
 	
+	@Rule
+	public ErrorCollector error = new ErrorCollector();
+	
 	@Test
-	public void teste() {
+	public void testeLocacao() {
 		// Teste com Junit de condicao
 
 		// cenario
@@ -36,13 +41,8 @@ public class LocacaoServiceTest {
 		Assert.assertTrue(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)));
 */
 		
-        Assert.assertThat(locacao.getValor(), CoreMatchers.is(4.0)); //forma completa 
-		assertThat(locacao.getValor(), is(4.0)); //forma deixando static os imports (utilizando ctrl + shift M)
-		
-		Assert.assertThat(locacao.getValor(), is(CoreMatchers.not(5.0)));//forma completa negando a afirmacao
-		assertThat(locacao.getValor(), is(not(5.0)));//forma deixando static os imports (utilizando ctrl + shift M), negando a afirmacao
-		
-		Assert.assertThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true)); 
-		Assert.assertThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), CoreMatchers.is(true));
+        error.checkThat(locacao.getValor(), CoreMatchers.is(4.0)); //forma completa 
+        error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true)); 
+        error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), CoreMatchers.is(true));
 	}
 }
