@@ -22,6 +22,7 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.excpetion.FilmeSemEstoqueException;
 import br.ce.wcaquino.excpetion.LocadoraException;
+import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoServiceTest {
@@ -80,8 +81,10 @@ public class LocacaoServiceTest {
 */
 		
         error.checkThat(locacao.getValor(), CoreMatchers.is(8.0)); //forma completa 
-        error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true)); 
-        error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), CoreMatchers.is(true));
+//        error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true)); 
+        error.checkThat(locacao.getDataLocacao(), MatchersProprios.ehHoje());//usando matcher proprio
+//        error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), CoreMatchers.is(true));
+		error.checkThat(locacao.getDataRetorno(), MatchersProprios.ehHojeComDiferencaDias(1));//usando matcher proprio
 	}
 	
 	
@@ -203,6 +206,7 @@ public class LocacaoServiceTest {
 
 		// verificacao
 		Assert.assertTrue(ehSegunda);
+		Assert.assertThat(locacao.getDataRetorno(), MatchersProprios.caiNumaSegunda()); //Usando Matcher proprio
 
 	}
 	
