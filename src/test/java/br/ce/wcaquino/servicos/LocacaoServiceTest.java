@@ -1,6 +1,7 @@
 package br.ce.wcaquino.servicos;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -181,6 +182,22 @@ public class LocacaoServiceTest {
 	Locacao locacao = service.alugarFilme(usuario, filmes);
 	
 	Assert.assertEquals(esperado, locacao.getValor());
+	
+   	}
+	
+	@Test
+   	public void naoDeveDevolverFilmeNoDomingo() throws LocadoraException, FilmeSemEstoqueException {
+   		
+	// cenario
+	Usuario usuario = new Usuario("Usuario 1");
+	List<Filme> filmes =  Arrays.asList(new Filme("Filme 1", 2, 4.0));
+	
+	// acao
+	Locacao locacao = service.alugarFilme(usuario, filmes);
+	boolean ehSegunda = DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY);
+	
+	//verificacao
+	Assert.assertTrue(ehSegunda);
 	
    	}
 	
