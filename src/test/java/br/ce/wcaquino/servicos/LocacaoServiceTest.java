@@ -18,6 +18,7 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
+import br.ce.wcaquino.builders.LocacaoBuilder;
 import br.ce.wcaquino.daos.LocacaoDao;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -32,6 +33,8 @@ public class LocacaoServiceTest {
 	
 	private LocacaoService service;
 	private SpcService spc;
+	private EmailService email;
+	private LocacaoDao dao;
 	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
@@ -43,11 +46,13 @@ public class LocacaoServiceTest {
 	public void setup() {
 //		System.out.println("before");
 		
-		LocacaoDao dao = Mockito.mock(LocacaoDao.class);
+		dao = Mockito.mock(LocacaoDao.class);
 		service = new LocacaoService();
 		service.setDao(dao);
 		spc = Mockito.mock(SpcService.class);
 		service.setSpc(spc);
+		email = Mockito.mock(EmailService.class);
+		service.setEmailService(email);
 	}
 	@After
 	public void tearDown() {
@@ -227,6 +232,27 @@ public class LocacaoServiceTest {
 		
 		//acao
 		service.alugarFilme(usuario, filmes);
+	}
+	
+	@Test
+	public void deveEnviarEmailParaLocacoesEmAtraso() {
+		//cenario envia email para o usuario criado na lotacao, que simula um usuario com atraso.
+		
+		Usuario usuario = new Usuario("Usuario 1");
+		Usuario usuario2 = new Usuario("Usuario 2");
+		List<Locacao>locacoes = Arrays.asList(LocacaoBuilder.umLocacao()
+								.comUsuario(usuario)
+								.comDataRetorno(DataUtils.obterDataComDiferencaDias(-2))
+								.agora());
+		
+		//quando o dao obter as Locacoes, eu passo o mock
+		Mockito.when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
+		
+		//acao
+		service.notificarAtraso();
+		
+		//verifico se o email, foi enviado para o usuario que estava com atraso
+		Mockito.verify(email).notificarAtraso(usuario);
 	}
 		
 	
