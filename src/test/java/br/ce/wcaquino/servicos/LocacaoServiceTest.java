@@ -224,7 +224,7 @@ public class LocacaoServiceTest {
 		Usuario usuario = new Usuario("Usuario 1");
 		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0));
 		
-		Mockito.when(spc.possuiNegativacao(usuario)).thenReturn(true); //mockando o dado esperado
+		Mockito.when(spc.possuiNegativacao(Mockito.any(Usuario.class))).thenReturn(true); //mockando o dado esperado
 		
 		
 		exception.expect(LocadoraException.class);
@@ -239,11 +239,11 @@ public class LocacaoServiceTest {
 		//cenario envia email para o usuario criado na lotacao, que simula um usuario com atraso.
 		
 		Usuario usuario = new Usuario("Usuario 1");
-		Usuario usuario2 = new Usuario("Usuario 2");
-		List<Locacao>locacoes = Arrays.asList(LocacaoBuilder.umLocacao()
-								.comUsuario(usuario)
-								.comDataRetorno(DataUtils.obterDataComDiferencaDias(-2))
-								.agora());
+		Usuario usuario2 = new Usuario("Usuario em dia");
+		List<Locacao>locacoes = Arrays.asList(
+				LocacaoBuilder.umLocacao().comUsuario(usuario).atrasada().agora(),
+				LocacaoBuilder.umLocacao().comUsuario(usuario2).agora()
+				);
 		
 		//quando o dao obter as Locacoes, eu passo o mock
 		Mockito.when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
@@ -252,7 +252,9 @@ public class LocacaoServiceTest {
 		service.notificarAtraso();
 		
 		//verifico se o email, foi enviado para o usuario que estava com atraso
-		Mockito.verify(email).notificarAtraso(usuario);
+		Mockito.verify(email).notificarAtraso(usuario); //verifica se este esta em atraso
+		Mockito.verify(email, Mockito.never()).notificarAtraso(usuario2); //verifica se esse nunca recebeu o email
+		Mockito.verifyNoMoreInteractions(email); //verifica se mais ninguem recebeu o email
 	}
 		
 	
