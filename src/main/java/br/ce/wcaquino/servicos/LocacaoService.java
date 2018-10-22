@@ -2,11 +2,11 @@ package br.ce.wcaquino.servicos;
 
 import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import br.ce.wcaquino.daos.LocacaoDao;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -15,6 +15,8 @@ import br.ce.wcaquino.excpetion.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoService {
+	
+	private LocacaoDao dao;
 
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws LocadoraException, FilmeSemEstoqueException {
 		if (usuario == null) {
@@ -68,10 +70,14 @@ public class LocacaoService {
 		locacao.setDataRetorno(dataEntrega);
 
 		// Salvando a locacao...
-		// TODO adicionar método para salvar
+		dao.salvar(locacao);
 
 		return locacao;
 
+	}
+	
+	public void setDao(LocacaoDao dao) {
+		this.dao = dao;
 	}
 
 //	public static void main(String[] args) throws Exception {
