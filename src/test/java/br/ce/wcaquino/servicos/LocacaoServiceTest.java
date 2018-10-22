@@ -209,9 +209,6 @@ public class LocacaoServiceTest {
 		Assert.assertThat(locacao.getDataRetorno(), MatchersProprios.caiNumaSegunda()); //Usando Matcher proprio
 
 	}
-	
-	
-	
-	
+		
 	
 }
