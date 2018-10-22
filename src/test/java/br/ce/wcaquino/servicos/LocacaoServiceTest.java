@@ -16,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -269,10 +270,28 @@ public class LocacaoServiceTest {
 		exception.expect(LocadoraException.class);
 		exception.expectMessage("problema com o SPC");
 		
-		
 		//acao
 		service.alugarFilme(usuario, filmes);
 	}
+	@Test
+	public void deveProrrogarUmaLocacao() {
+		//cenario
+		Locacao locacao = LocacaoBuilder.umLocacao().agora();
 		
+		//acao
+		service.prorrogarLocacao(locacao, 3);
+		
+		
+		//validacao
+		ArgumentCaptor<Locacao> argumentCaptor = ArgumentCaptor.forClass(Locacao.class); //instancia
+		Mockito.verify(dao).salvar(argumentCaptor.capture()); //caputra o valor que foi utilizado no metodo salvar
+		Locacao locacaoRetornada = argumentCaptor.getValue(); //instancia com o valor capturado
+		
+		Assert.assertEquals(12.0, locacaoRetornada.getValor(), 0.01);
+		Assert.assertThat( locacaoRetornada.getDataLocacao(), MatchersProprios.ehHoje());
+		Assert.assertTrue(DataUtils.isMesmaData(locacaoRetornada.getDataRetorno(), DataUtils.obterDataComDiferencaDias(3)));
+	}
+	
+	
 	
 }
