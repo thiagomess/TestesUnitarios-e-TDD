@@ -16,7 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import br.ce.wcaquino.builders.LocacaoBuilder;
 import br.ce.wcaquino.daos.LocacaoDao;
@@ -28,12 +31,17 @@ import br.ce.wcaquino.excpetion.LocadoraException;
 import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 
+//@RunWith(MockitoJUnitRunner.class) //Pode iniciar aqui ou no before
 public class LocacaoServiceTest {
 	//DOC. HAMCREST http://hamcrest.org/JavaHamcrest/javadoc/1.3/index.html?help-doc.html
 	
+	@InjectMocks //injeta o mock aqui
 	private LocacaoService service;
+	@Mock //define que sera mock
 	private SpcService spc;
+	@Mock
 	private EmailService email;
+	@Mock
 	private LocacaoDao dao;
 	
 	@Rule
@@ -45,14 +53,7 @@ public class LocacaoServiceTest {
 	@Before
 	public void setup() {
 //		System.out.println("before");
-		
-		dao = Mockito.mock(LocacaoDao.class);
-		service = new LocacaoService();
-		service.setDao(dao);
-		spc = Mockito.mock(SpcService.class);
-		service.setSpc(spc);
-		email = Mockito.mock(EmailService.class);
-		service.setEmailService(email);
+		MockitoAnnotations.initMocks(this); //Pode iniciar aqui ou no inicio da classe
 	}
 	@After
 	public void tearDown() {

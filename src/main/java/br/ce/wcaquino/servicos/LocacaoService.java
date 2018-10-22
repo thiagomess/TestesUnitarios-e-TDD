@@ -92,16 +92,6 @@ public class LocacaoService {
 		}
 	}
 	
-	public void setEmailService(EmailService emailService) {
-		this.emailService = emailService;
-	}
-	public void setSpc(SpcService spc) {
-		this.spc = spc;
-	}
-
-	public void setDao(LocacaoDao dao) {
-		this.dao = dao;
-	}
 
 //	public static void main(String[] args) throws Exception {
 //		// Teste Manual sem framework
