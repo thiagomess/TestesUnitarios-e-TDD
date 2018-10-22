@@ -31,8 +31,7 @@ public class LocacaoServiceTest {
 	//DOC. HAMCREST http://hamcrest.org/JavaHamcrest/javadoc/1.3/index.html?help-doc.html
 	
 	private LocacaoService service;
-	
-	private static Integer numero = 0; //desse modo a variavel nao é reinicializada a cada teste
+	private SpcService spc;
 	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
@@ -47,9 +46,8 @@ public class LocacaoServiceTest {
 		LocacaoDao dao = Mockito.mock(LocacaoDao.class);
 		service = new LocacaoService();
 		service.setDao(dao);
-		numero++;
-//		System.out.println("contador: "+numero);
-		
+		spc = Mockito.mock(SpcService.class);
+		service.setSpc(spc);
 	}
 	@After
 	public void tearDown() {
@@ -213,6 +211,22 @@ public class LocacaoServiceTest {
 		Assert.assertTrue(ehSegunda);
 		Assert.assertThat(locacao.getDataRetorno(), MatchersProprios.caiNumaSegunda()); //Usando Matcher proprio
 
+	}
+	
+	@Test
+	public void deveLancarExceptionUsuarioNegativado() throws LocadoraException, FilmeSemEstoqueException {
+		//cenario
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0));
+		
+		Mockito.when(spc.possuiNegativacao(usuario)).thenReturn(true); //mockando o dado esperado
+		
+		
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("Usuario negativado");
+		
+		//acao
+		service.alugarFilme(usuario, filmes);
 	}
 		
 	
