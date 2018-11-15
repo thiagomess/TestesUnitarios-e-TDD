@@ -138,6 +138,16 @@ public class LocacaoServicePowerMockTest {
 		PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
 	}
 	
+	//Acessando um metodo privado com powerMock
+		@Test
+		public void deveTestarCalcularValorLocacao() throws Exception {
+			List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0));
+			
+			//Entrando em um metodo privado. whitebox do pacote org.powermock.reflect.Whitebox
+			Double valor = (Double) Whitebox.invokeMethod(service, "calcularValorLocacao", filmes);
+		
+			Assert.assertThat(valor, CoreMatchers.is(4.0));
+		}
 
 	
 }
