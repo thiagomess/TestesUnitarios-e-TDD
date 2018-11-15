@@ -19,11 +19,14 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import br.ce.wcaquino.daos.LocacaoDao;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.excpetion.FilmeSemEstoqueException;
+import br.ce.wcaquino.excpetion.LocadoraException;
 import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 
@@ -51,6 +54,7 @@ public class LocacaoServicePowerMockTest {
 	public void setup() {
 //		System.out.println("before");
 		MockitoAnnotations.initMocks(this); //Pode iniciar aqui ou no inicio da classe
+		service = PowerMockito.spy(service); // Informa que o service sera gerenciado pelo powerMockito
 	}
 	
 	@Test
@@ -119,7 +123,21 @@ public class LocacaoServicePowerMockTest {
 
 	}
 	
+	//Mockando o resultado de um metodo privado para nao ter que entrar nele
+	@Test
+	public void deveAlugarUmFIlme_SemCalcularValor() throws Exception {
+		Usuario usuario = new Usuario("Usuario 1");
+		List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 4.0));
+		
+		//Mockando um metodo privado calcularValorLocacao
+		PowerMockito.doReturn(1.0).when(service, "calcularValorLocacao", filmes);
+		
+		Locacao locacao = service.alugarFilme(usuario, filmes);
+		
+		Assert.assertThat(locacao.getValor(), CoreMatchers.is(1.0));
+		PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
+	}
 	
-	
+
 	
 }
